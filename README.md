@@ -1,52 +1,58 @@
-# Psycholinguistic Analysis Dashboard (Prototype)
+# 心理言語学分析ダッシュボード（プロトタイプ）
 
-A rapid-prototype Shiny dashboard that performs psycholinguistic analysis using Grok (xAI) on Twitter handles or raw text corpora. It maps extracted evidence against the Big Five NEO-PI-R personality traits, assesses entrepreneurial traits, and flags behavioral discrepancies.
+Shinyで構築したプロトタイプのダッシュボードです。Twitterのアカウント名や生のテキストコーパスを入力すると、心理言語学的な分析を実行し、抽出されたエビデンスをBig Five（NEO-PI-R）の30のパーソナリティ特性、起業家としての特性、行動上の不一致（レッドフラッグ）にマッピングします。
 
-> **Note on Running This Repo:**  
-> This repository is published strictly as a **code-showcase and proof of concept** alongside the live demo. The deployment `manifest.json` tracks local environment files that are intentionally omitted from version control for security. Cloning and running this out of the box will not work without manual environment setup and a valid xAI API key.
+> **このリポジトリを実行する際の注意**
+> このリポジトリは、ライブデモと併せて公開する**コードショーケース・概念実証**としてのみ公開しています。デプロイ用の`manifest.json`には、セキュリティ上の理由から意図的にバージョン管理から除外しているローカル環境のファイルが記録されています。そのため、このままクローンして実行しても動作しません。手動での環境セットアップと有効なxAI APIキーが必要です。
 
-The live demo can be accessed on Posit RShiny platform here: https://tachiaoi.shinyapps.io/demo/
-*(Note: The xAI API key is currently unprovisioned with credits, so running a live query will return an error.)*
+ライブデモはPosit RShinyプラットフォームで以下からアクセスできます。
 
----
-## Core Intuition behind this prototype
+https://tachiaoi.shinyapps.io/demo/
 
-Recent AI and computational linguistics research suggests that languages share a universal geometric shape in high-dimensional latent space: regardless of the language or architecture, models converge on the same underlying semantic manifold.
-
-By leveraging these hyperdimensional representations, LLMs do not simply parse text—they navigate an embedded topology where word choice, sentence structure, and conversational flow correlate directly with psychological traits, affective states, and cognitive patterns. This prompt operationalizes that geometry by framing the model as a psycholinguist, projecting unstructured dialogue transcripts onto the 30 facets of the Big Five (NEO-PI-R), entrepreneurial markers, and diagnostic behavioral signals.
+（注：xAI APIキーには現在クレジットが割り当てられていないため、ライブクエリを実行するとエラーが返されます。）
 
 ---
 
-## Why Shiny?
+## このプロトタイプのコンセプト
 
-This prototype was built with Shiny because my technical background is initially rooted in R, and I wanted to leverage Posit's seamless, one-click deployment workflow. It allowed me to move from prompt engineering to a working, interactive interface without getting bogged down in front-end frameworks or disparate DevOps plumbing.
+最近のAIや計算言語学の研究では、言語は高次元の潜在空間において普遍的な幾何学的形状を持っていることが示唆されています。言語やアーキテクチャに関係なく、モデルは同じ根本的な意味マニフォールドに収束するということです。
 
----
-
-## Core Concepts & Architectural Goals
-
-This codebase was developed to test feasibility under specific prototype constraints:
-
-* **Speed of Execution & Feasibility:** Focus on rapid validation of the core analysis pipeline rather than building production-grade enterprise software.
-* **API Exploration:** Contains initial traces of what would eventually become a standalone API service (e.g., Plumber integration traces). The current code is intentionally monolithic and exploratory.
-* **Strict Prompt Engineering & Structured Outputs:** Pushing the boundaries of complex system prompting (`system_prompt.txt`) to extract 30 NEO-PI-R subfacets, entrepreneurship markers, and red flags while enforcing a strict JSON schema via API parameters (`response_format = list(type = "json_object")`).
-* **Session Persistence:** A lightweight embedded SQLite layer (`RSQLite` / `DBI`) for caching and retrieving previously run profiles dynamically.
+この超次元表現を活用することで、LLMは単にテキストを解析するだけでなく、埋め込まれたトポロジーの中を移動します。そこでは、語彙選択、文構造、会話の流れが、心理的特徴、感情状態、認知パターンと直接的に相関しています。このプロンプトはその幾何学的構造を活用し、モデルを心理言語学者として位置づけ、構造化されていない対話の書き起こしをBig Five（NEO-PI-R）の30の側面、起業家マーカー、診断的な行動シグナルに投影します。
 
 ---
 
-## Technical Stack
+## なぜShinyなのか
 
-* **Framework:** [R Shiny](https://shiny.posit.co/)
-* **HTTP Client:** [`httr2`](https://httr2.r-lib.org/) for asynchronous-style HTTP handling and timeouts
-* **Persistence:** SQLite via `DBI` / `RSQLite`
-* **UI Utilities:** `shinyjs`, `bslib`
-* **LLM Engine:** xAI Grok API (`grok-4-latest` with live X search capabilities)
+自分の技術的なバックグラウンドはもともとRにあり、Positのシームレスなワンクリックデプロイワークフローを使いたかったからです。プロンプトエンジニアリングから動作するインタラクティブなインターフェースまで、フロントエンドフレームワークや煩雑なDevOpsの設定に時間を取られることなく、スムーズに移行できました。
 
 ---
 
-## Environment & Secrets (For Reference)
+## 主要コンセプトとアーキテクチャの目標
 
-The application expects credentials to be passed via environment variables (typically defined in a local `.Renviron` file):
+このコードベースは、特定のプロトタイプ制約のもとで実現可能性を検証するために開発されました。
+
+* **実行速度と実現可能性：** 本番レベルのエンタープライズソフトウェアを作るのではなく、コアとなる分析パイプラインの迅速な検証に焦点を当てています。
+* **APIの探索：** 最終的にスタンドアロンのAPIサービスになるもの（例：Plumber統合の痕跡）の初期の試みが含まれています。現在のコードは意図的にモノリシックで、探索的なものです。
+* **厳格なプロンプトエンジニアリングと構造化出力：** 複雑なシステムプロンプト（`system_prompt.txt`）の限界に挑戦し、30のNEO-PI-Rサブファセット、起業家マーカー、レッドフラッグを抽出しつつ、APIパラメータ（`response_format = list(type = "json_object")`）を通じて厳格なJSONスキーマを強制します。
+* **セッション永続化：** 以前に実行されたプロファイルを動的にキャッシュ・取得するための、軽量な組み込みSQLiteレイヤー（`RSQLite` / `DBI`）。
+
+---
+
+## 技術スタック
+
+| カテゴリ | 技術 |
+|---|---|
+| フレームワーク | [R Shiny](https://shiny.posit.co/) |
+| HTTPクライアント | [`httr2`](https://httr2.r-lib.org/)（非同期スタイルのHTTP処理とタイムアウト） |
+| 永続化 | `DBI` / `RSQLite`によるSQLite |
+| UIユーティリティ | `shinyjs`、`bslib` |
+| LLMエンジン | xAI Grok API（ライブX検索機能付き`grok-4-latest`） |
+
+---
+
+## 環境変数とシークレット（参考）
+
+アプリケーションは、環境変数（通常はローカルの`.Renviron`ファイルで定義）を通じて認証情報を受け取ります。
 
 ```env
 # .Renviron
